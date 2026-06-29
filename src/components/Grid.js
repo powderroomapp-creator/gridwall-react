@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-const GRID_SIZE = 1000
 const SAMPLE = 80
 const OWNERS = [
   { name: 'GridWall', tag: 'PRIME', type: 'platform' },
@@ -85,7 +84,7 @@ export default function Grid({ session, onSquareClick }) {
   }
 
   return (
-    <div style={{ padding: '1rem', textAlign: 'center' }}>
+    <div style={{ padding:'1rem', textAlign:'center' }}>
       <p style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', color:'#555', letterSpacing:'0.15em', textTransform:'uppercase', marginBottom:'0.5rem' }}>
         Live grid preview — 80×80 sample of 1,000,000
       </p>
@@ -93,28 +92,16 @@ export default function Grid({ session, onSquareClick }) {
         Every square has an owner.
       </h2>
       <p style={{ color:'#9e9e9e', fontSize:'0.85rem', marginBottom:'1rem' }}>
-        {session ? 'Hover squares to see owners. Use the buttons below to buy, sell, or rent.' : 'Sign in to buy your square.'}
+        {session ? 'Hover squares to see owners. Use the buttons below to buy, sell, or rent.' : 'Sign in to claim your square.'}
       </p>
       <div style={{ position:'relative', display:'inline-block' }}>
-        <canvas
-          ref={canvasRef}
-          width={560} height={560}
+        <canvas ref={canvasRef} width={560} height={560}
           style={{ display:'block', border:'1px solid rgba(255,255,255,0.1)', cursor:'crosshair', maxWidth:'100%' }}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={() => setTooltip(null)}
-          onClick={onSquareClick}
-        />
+          onMouseMove={handleMouseMove} onMouseLeave={() => setTooltip(null)} onClick={onSquareClick} />
         {tooltip && (
-          <div style={{
-            position: 'fixed',
-            left: tooltip.x + 12,
-            top: tooltip.y - 30,
-            background: '#fff', color: '#000',
-            fontFamily: 'Space Mono,monospace', fontSize: '0.65rem',
-            padding: '3px 8px', fontWeight: 700,
-            pointerEvents: 'none', zIndex: 200,
-            whiteSpace: 'nowrap'
-          }}>
+          <div style={{ position:'fixed', left:tooltip.x+12, top:tooltip.y-30, background:'#fff', color:'#000',
+            fontFamily:'Space Mono,monospace', fontSize:'0.65rem', padding:'3px 8px', fontWeight:700,
+            pointerEvents:'none', zIndex:200, whiteSpace:'nowrap' }}>
             {tooltip.owner.name} — {tooltip.owner.tag}
           </div>
         )}
