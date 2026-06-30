@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-const GRID_SIZE = 1000
 const SAMPLE = 80
 const CENTER = SAMPLE / 2
 
