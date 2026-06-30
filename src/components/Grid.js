@@ -4,10 +4,10 @@ const GRID_SIZE = 1000
 const SAMPLE = 80
 const CENTER = SAMPLE / 2
 
-// Verified zone radii, scaled from real grid boundaries (126 / 357 out of 1000)
-// down to the 80x80 sample: 126*(80/1000)=10.08, 357*(80/1000)=28.56
-const ZONE_A_RADIUS = 10.08
-const ZONE_AB_RADIUS = 28.56
+// Verified zone radii, scaled from real grid boundaries (147 / 387 out of 1000)
+// down to the 80x80 sample: 147*(80/1000)=11.76, 387*(80/1000)=30.96
+const ZONE_A_RADIUS = 11.76
+const ZONE_AB_RADIUS = 30.96
 
 function getZone(c, r) {
   const dist = Math.sqrt(Math.pow(c - CENTER, 2) + Math.pow(r - CENTER, 2))
