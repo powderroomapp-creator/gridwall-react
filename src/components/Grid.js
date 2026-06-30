@@ -1,6 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 
+const GRID_SIZE = 1000
 const SAMPLE = 80
+const CENTER = SAMPLE / 2
+
+// Verified zone radii, scaled from real grid boundaries (126 / 357 out of 1000)
+// down to the 80x80 sample: 126*(80/1000)=10.08, 357*(80/1000)=28.56
+const ZONE_A_RADIUS = 10.08
+const ZONE_AB_RADIUS = 28.56
+
+function getZone(c, r) {
+  const dist = Math.sqrt(Math.pow(c - CENTER, 2) + Math.pow(r - CENTER, 2))
+  if (dist <= ZONE_A_RADIUS) return 'A'
+  if (dist <= ZONE_AB_RADIUS) return 'B'
+  return 'C'
+}
+
 const OWNERS = [
   { name: 'GridWall', tag: 'PRIME', type: 'platform' },
   { name: 'GridWall', tag: 'PRIME', type: 'platform' },
@@ -21,20 +36,15 @@ export default function Grid({ session, onSquareClick }) {
     for (let r = 0; r < SAMPLE; r++) {
       d[r] = []
       for (let c = 0; c < SAMPLE; c++) {
-        const dist = Math.sqrt(Math.pow(c-40,2)+Math.pow(r-40,2))
+        const zone = getZone(c, r)
         const rand = Math.random()
-        let type = 'empty', owner = null
-        if (dist < 15) {
-          if (rand < 0.85) { type='platform'; owner=OWNERS[0] }
-          else if (rand < 0.95) { type='renter'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
-          else { type='sold'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
-        } else if (dist < 32) {
-          if (rand < 0.5) { type='sold'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
-          else if (rand < 0.6) { type='renter'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
-        } else {
-          if (rand < 0.2) { type='sold'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
+        let owner = null
+        let type = 'empty'
+        if (rand < 0.15) {
+          owner = OWNERS[Math.floor(Math.random() * OWNERS.length)]
+          type = owner.type === 'platform' ? 'platform' : owner.type === 'renter' ? 'renter' : 'sold'
         }
-        d[r][c] = { type, owner, flicker: Math.random() }
+        d[r][c] = { zone, type, owner, shade: Math.random() }
       }
     }
     return d
@@ -52,13 +62,19 @@ export default function Grid({ session, onSquareClick }) {
       for (let r = 0; r < SAMPLE; r++) {
         for (let c = 0; c < SAMPLE; c++) {
           const cell = gridData[r][c]
-          const flicker = Math.sin(tick * 0.03 + cell.flicker * 10) * 0.5 + 0.5
           const x = c * SQ, y = r * SQ
-          if (cell.type === 'platform') ctx.fillStyle = `rgba(255,255,255,${0.7+flicker*0.3})`
-          else if (cell.type === 'renter') ctx.fillStyle = `rgba(255,255,255,${0.35+flicker*0.15})`
-          else if (cell.type === 'sold') ctx.fillStyle = `rgba(255,255,255,${0.12+flicker*0.08})`
-          else ctx.fillStyle = 'rgba(255,255,255,0.03)'
-          ctx.fillRect(x+0.5, y+0.5, SQ-1, SQ-1)
+
+          let base
+          if (cell.zone === 'A') base = 245
+          else if (cell.zone === 'B') base = 140
+          else base = 55
+
+          const variance = (cell.shade - 0.5) * 18
+          const pulse = cell.type !== 'empty' ? Math.sin(tick * 0.03 + cell.shade * 10) * 8 : 0
+          const value = Math.max(20, Math.min(255, base + variance + pulse))
+
+          ctx.fillStyle = `rgb(${value},${value},${value})`
+          ctx.fillRect(x + 0.5, y + 0.5, SQ - 1, SQ - 1)
         }
       }
       tick++
@@ -78,13 +94,13 @@ export default function Grid({ session, onSquareClick }) {
     const r = Math.floor((e.clientY - rect.top) * scaleY / SQ)
     if (c >= 0 && c < SAMPLE && r >= 0 && r < SAMPLE) {
       const cell = gridData[r][c]
-      if (cell.owner) setTooltip({ x: e.clientX, y: e.clientY, owner: cell.owner })
-      else setTooltip(null)
+      const label = cell.owner ? `${cell.owner.name} — ${cell.owner.tag}` : `Zone ${cell.zone} — available`
+      setTooltip({ x: e.clientX, y: e.clientY, label })
     }
   }
 
   return (
-    <div style={{ padding:'1rem', textAlign:'center' }}>
+    <div style={{ padding: '1rem', textAlign: 'center' }}>
       <p style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', color:'#555', letterSpacing:'0.15em', textTransform:'uppercase', marginBottom:'0.5rem' }}>
         Live grid preview — 80×80 sample of 1,000,000
       </p>
@@ -92,19 +108,39 @@ export default function Grid({ session, onSquareClick }) {
         Every square has an owner.
       </h2>
       <p style={{ color:'#9e9e9e', fontSize:'0.85rem', marginBottom:'1rem' }}>
-        {session ? 'Hover squares to see owners. Use the buttons below to buy, sell, or rent.' : 'Sign in to claim your square.'}
+        {session ? 'Hover squares to see owners. Use the buttons below to buy, sell, or rent.' : 'Sign in to buy your square.'}
       </p>
       <div style={{ position:'relative', display:'inline-block' }}>
-        <canvas ref={canvasRef} width={560} height={560}
+        <canvas
+          ref={canvasRef}
+          width={560} height={560}
           style={{ display:'block', border:'1px solid rgba(255,255,255,0.1)', cursor:'crosshair', maxWidth:'100%' }}
-          onMouseMove={handleMouseMove} onMouseLeave={() => setTooltip(null)} onClick={onSquareClick} />
+          onMouseMove={handleMouseMove}
+          onMouseLeave={() => setTooltip(null)}
+          onClick={onSquareClick}
+        />
         {tooltip && (
-          <div style={{ position:'fixed', left:tooltip.x+12, top:tooltip.y-30, background:'#fff', color:'#000',
-            fontFamily:'Space Mono,monospace', fontSize:'0.65rem', padding:'3px 8px', fontWeight:700,
-            pointerEvents:'none', zIndex:200, whiteSpace:'nowrap' }}>
-            {tooltip.owner.name} — {tooltip.owner.tag}
+          <div style={{
+            position: 'fixed',
+            left: tooltip.x + 12,
+            top: tooltip.y - 30,
+            background: '#fff', color: '#000',
+            fontFamily: 'Space Mono,monospace', fontSize: '0.65rem',
+            padding: '3px 8px', fontWeight: 700,
+            pointerEvents: 'none', zIndex: 200,
+            whiteSpace: 'nowrap'
+          }}>
+            {tooltip.label}
           </div>
         )}
+      </div>
+      <div style={{ display:'flex', justifyContent:'center', gap:'1.5rem', marginTop:'1rem', flexWrap:'wrap' }}>
+        {[['#f5f5f5', 'Zone A — center'], ['#8c8c8c', 'Zone B — mid'], ['#373737', 'Zone C — outer']].map(([color, label]) => (
+          <div key={label} style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+            <div style={{ width:10, height:10, background:color, border:'1px solid rgba(255,255,255,0.2)' }} />
+            <span style={{ fontSize:'0.7rem', color:'#9e9e9e' }}>{label}</span>
+          </div>
+        ))}
       </div>
       <div style={{ display:'flex', justifyContent:'center', gap:'2.5rem', marginTop:'1.5rem', flexWrap:'wrap' }}>
         {[['247,483','Squares claimed'],['18,294','Currently rented'],['$4.20','Avg resale value']].map(([val,label]) => (
