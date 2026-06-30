@@ -186,10 +186,10 @@ export default function HomePage({ onSignIn }) {
         </div>
 
         {/* Headline + typewriter */}
-        <h1 style={{ fontSize:'clamp(1.8rem,4vw,3.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
+        <h1 style={{ fontSize:'clamp(1.4rem,3vw,2.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
           Own your spot.
         </h1>
-        <div style={{ fontSize:'clamp(1.8rem,4vw,3.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'1.5rem', minHeight:'1.1em', color:'#555' }}>
+        <div style={{ fontSize:'clamp(1.4rem,3vw,2.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
           {tagline}<span style={{ display:'inline-block', width:3, height:'0.85em', background:'#fff', marginLeft:4, verticalAlign:'middle', animation:'blink 1s infinite' }} />
         </div>
 
