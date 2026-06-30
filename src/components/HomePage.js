@@ -189,7 +189,7 @@ export default function HomePage({ onSignIn }) {
         <h1 style={{ fontSize:'clamp(1.4rem,3vw,2.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
           Own your spot.
         </h1>
-        <div style={{ fontSize:'clamp(1.4rem,3vw,2.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
+        <div style={{ fontSize:'clamp(1.4rem,3vw,2.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'1.5rem', minHeight:'1.1em', color:'#555' }}>
           {tagline}<span style={{ display:'inline-block', width:3, height:'0.85em', background:'#fff', marginLeft:4, verticalAlign:'middle', animation:'blink 1s infinite' }} />
         </div>
 
