@@ -186,10 +186,10 @@ export default function HomePage({ onSignIn }) {
         </div>
 
         {/* Headline + typewriter */}
-        <h1 style={{ fontSize:'clamp(2.5rem,7vw,6rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
+        <h1 style={{ fontSize:'clamp(1.8rem,4vw,3.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
           Own your spot.
         </h1>
-        <div style={{ fontSize:'clamp(2.5rem,7vw,6rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'1.5rem', minHeight:'1.1em', color:'#555' }}>
+        <div style={{ fontSize:'clamp(1.8rem,4vw,3.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'1.5rem', minHeight:'1.1em', color:'#555' }}>
           {tagline}<span style={{ display:'inline-block', width:3, height:'0.85em', background:'#fff', marginLeft:4, verticalAlign:'middle', animation:'blink 1s infinite' }} />
         </div>
 
@@ -223,7 +223,7 @@ export default function HomePage({ onSignIn }) {
       {/* HOW IT WORKS */}
       <section style={{ padding:'5rem 2rem', maxWidth:1000, margin:'0 auto', borderTop:'1px solid rgba(255,255,255,0.08)' }}>
         <p style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', color:'#555', letterSpacing:'0.2em', textTransform:'uppercase', marginBottom:'1rem' }}>How it works</p>
-        <h2 style={{ fontSize:'clamp(1.6rem,3vw,2.2rem)', fontWeight:700, letterSpacing:'-0.02em', marginBottom:'2.5rem' }}>Three ways to play.</h2>
+        <h2 style={{ fontSize:'clamp(1.6rem,3vw,2.2rem)', fontWeight:700, letterSpacing:'-0.02em', marginBottom:'2.5rem' }}>Four ways to play.</h2>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'1.5rem' }}>
           {[
             ['01 — OWN', 'Buy your square', 'Pick your spot on the 1000×1000 grid. Add your photo, link, and color. Yours forever — or until you sell it.'],
