@@ -188,21 +188,39 @@ export default function HomePage({ onSignIn }) {
   return (
     <div style={{ background: '#000', color: '#fff', fontFamily: 'Space Grotesk, sans-serif' }}>
 
-      {/* HERO + GRID COMBINED */}
-      <section style={{ paddingTop: '80px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+      {/* HERO + GRID + LIVE SIDEBAR */}
+      <section style={{ paddingTop: '80px', minHeight: '100vh', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap', padding: '80px 1.5rem 2rem' }}>
 
-        {/* Eyebrow */}
-        <div style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', letterSpacing:'0.18em', color:'#555', textTransform:'uppercase', marginBottom:'0.75rem', display:'flex', alignItems:'center', gap:'0.75rem' }}>
-          <div style={{ width:6, height:6, borderRadius:'50%', background:'#fff', animation:'pulse 2s infinite' }} />
-          1,000,000 squares — 1000 × 1000 grid
+        {/* Live activity sidebar - left side, stream style */}
+        <div style={{ width: '260px', flexShrink: 0, display: window.innerWidth < 1000 ? 'none' : 'block' }}>
+          <div style={{ position: 'sticky', top: '90px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'1rem' }}>
+              <div style={{ width:6, height:6, borderRadius:'50%', background:'#fff', animation:'pulse 2s infinite' }} />
+              <span style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', color:'#555', letterSpacing:'0.15em', textTransform:'uppercase' }}>Live activity</span>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:0, maxHeight:'500px', overflow:'hidden' }}>
+              {activityItems.map((item, i) => (
+                <div key={i} style={{ display:'flex', alignItems:'flex-start', gap:'0.5rem', padding:'0.7rem 0', borderBottom:'1px solid rgba(255,255,255,0.06)', fontSize:'0.75rem', opacity: 1 - (i * 0.15) }}>
+                  <div style={{ width:5, height:5, borderRadius:'50%', background:'#fff', flexShrink:0, marginTop:'5px', boxShadow: item.platform ? '0 0 6px rgba(255,255,255,0.6)' : 'none' }} />
+                  <div style={{ flex:1 }}>
+                    <div style={{ color:'#9e9e9e', lineHeight:1.4 }} dangerouslySetInnerHTML={{__html: item.text}} />
+                    <div style={{ fontFamily:'Space Mono,monospace', fontSize:'0.6rem', color:'#444', marginTop:'2px' }}>{item.time}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Headline + typewriter - smaller now */}
-        <h1 style={{ fontSize:'clamp(1.2rem,2.5vw,1.8rem)', fontWeight:700, lineHeight:1.1, letterSpacing:'-0.02em', marginBottom:'0.15rem' }}>
+        {/* Main hero content */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flex: '1 1 auto', minWidth: 0 }}>
+
+        {/* Headline + typewriter - bigger again, eyebrow removed */}
+        <h1 style={{ fontSize:'clamp(2.2rem,5.5vw,4.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.2rem', marginTop:'1.5rem' }}>
           Own your spot.
         </h1>
-        <div style={{ fontSize:'clamp(1.2rem,2.5vw,1.8rem)', fontWeight:700, lineHeight:1.1, letterSpacing:'-0.02em', marginBottom:'1.25rem', minHeight:'1.3em', color:'#555' }}>
-          {tagline}<span style={{ display:'inline-block', width:2, height:'0.85em', background:'#fff', marginLeft:4, verticalAlign:'middle', animation:'blink 1s infinite' }} />
+        <div style={{ fontSize:'clamp(2.2rem,5.5vw,4.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'1.5rem', minHeight:'1.1em', color:'#555' }}>
+          {tagline}<span style={{ display:'inline-block', width:3, height:'0.85em', background:'#fff', marginLeft:4, verticalAlign:'middle', animation:'blink 1s infinite' }} />
         </div>
 
         {/* Grid - bigger now */}
@@ -240,6 +258,7 @@ export default function HomePage({ onSignIn }) {
               <div style={{ fontSize:'0.7rem', color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:2 }}>{label}</div>
             </div>
           ))}
+        </div>
         </div>
       </section>
 
@@ -284,21 +303,6 @@ export default function HomePage({ onSignIn }) {
               <div style={{ height:2, background:'rgba(255,255,255,0.1)', marginTop:'0.5rem' }}>
                 <div style={{ height:'100%', background:'#fff', width:sold, transition:'width 1s ease' }} />
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ACTIVITY FEED */}
-      <section style={{ padding:'5rem 2rem', borderTop:'1px solid rgba(255,255,255,0.08)', maxWidth:600, margin:'0 auto' }}>
-        <p style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', color:'#555', letterSpacing:'0.2em', textTransform:'uppercase', marginBottom:'1rem' }}>Live activity</p>
-        <h2 style={{ fontSize:'clamp(1.4rem,3vw,1.8rem)', fontWeight:700, letterSpacing:'-0.02em', marginBottom:'1.5rem' }}>The grid never sleeps.</h2>
-        <div>
-          {activityItems.map((item, i) => (
-            <div key={i} style={{ display:'flex', alignItems:'center', gap:'1rem', padding:'0.85rem 0', borderBottom:'1px solid rgba(255,255,255,0.06)', fontSize:'0.85rem', transition:'opacity 0.3s' }}>
-              <div style={{ width:6, height:6, borderRadius:'50%', background:'#fff', flexShrink:0, boxShadow: item.platform ? '0 0 6px rgba(255,255,255,0.6)' : 'none' }} />
-              <div style={{ color:'#9e9e9e', flex:1 }} dangerouslySetInnerHTML={{__html: item.text}} />
-              <div style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', color:'#555', flexShrink:0 }}>{item.time}</div>
             </div>
           ))}
         </div>
