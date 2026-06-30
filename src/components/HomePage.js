@@ -14,6 +14,17 @@ const TAGLINES = [
 ]
 
 const SAMPLE = 80
+const CENTER = SAMPLE / 2
+const ZONE_A_RADIUS = 10.08
+const ZONE_AB_RADIUS = 28.56
+
+function getZone(c, r) {
+  const dist = Math.sqrt(Math.pow(c - CENTER, 2) + Math.pow(r - CENTER, 2))
+  if (dist <= ZONE_A_RADIUS) return 'A'
+  if (dist <= ZONE_AB_RADIUS) return 'B'
+  return 'C'
+}
+
 const OWNERS = [
   { name: 'GridWall', tag: 'PRIME', type: 'platform' },
   { name: 'GridWall', tag: 'PRIME', type: 'platform' },
@@ -52,20 +63,15 @@ export default function HomePage({ onSignIn }) {
     for (let r = 0; r < SAMPLE; r++) {
       d[r] = []
       for (let c = 0; c < SAMPLE; c++) {
-        const dist = Math.sqrt(Math.pow(c-40,2)+Math.pow(r-40,2))
+        const zone = getZone(c, r)
         const rand = Math.random()
-        let type = 'empty', owner = null
-        if (dist < 15) {
-          if (rand < 0.85) { type='platform'; owner=OWNERS[0] }
-          else if (rand < 0.95) { type='renter'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
-          else { type='sold'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
-        } else if (dist < 32) {
-          if (rand < 0.5) { type='sold'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
-          else if (rand < 0.6) { type='renter'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
-        } else {
-          if (rand < 0.2) { type='sold'; owner=OWNERS[Math.floor(Math.random()*OWNERS.length)] }
+        let owner = null
+        let type = 'empty'
+        if (rand < 0.15) {
+          owner = OWNERS[Math.floor(Math.random() * OWNERS.length)]
+          type = owner.type === 'platform' ? 'platform' : owner.type === 'renter' ? 'renter' : 'sold'
         }
-        d[r][c] = { type, owner, flicker: Math.random() }
+        d[r][c] = { zone, type, owner, shade: Math.random() }
       }
     }
     return d
@@ -109,12 +115,18 @@ export default function HomePage({ onSignIn }) {
       for (let r = 0; r < SAMPLE; r++) {
         for (let c = 0; c < SAMPLE; c++) {
           const cell = gridData[r][c]
-          const flicker = Math.sin(tick * 0.03 + cell.flicker * 10) * 0.5 + 0.5
           const x = c * SQ, y = r * SQ
-          if (cell.type === 'platform') ctx.fillStyle = `rgba(255,255,255,${0.7+flicker*0.3})`
-          else if (cell.type === 'renter') ctx.fillStyle = `rgba(255,255,255,${0.35+flicker*0.15})`
-          else if (cell.type === 'sold') ctx.fillStyle = `rgba(255,255,255,${0.12+flicker*0.08})`
-          else ctx.fillStyle = 'rgba(255,255,255,0.03)'
+
+          let base
+          if (cell.zone === 'A') base = 245
+          else if (cell.zone === 'B') base = 140
+          else base = 55
+
+          const variance = (cell.shade - 0.5) * 18
+          const pulse = cell.type !== 'empty' ? Math.sin(tick * 0.03 + cell.shade * 10) * 8 : 0
+          const value = Math.max(20, Math.min(255, base + variance + pulse))
+
+          ctx.fillStyle = `rgb(${value},${value},${value})`
           ctx.fillRect(x+0.5, y+0.5, SQ-1, SQ-1)
         }
       }
@@ -155,8 +167,8 @@ export default function HomePage({ onSignIn }) {
     const r = Math.floor((e.clientY - rect.top) * scaleY / SQ)
     if (c >= 0 && c < SAMPLE && r >= 0 && r < SAMPLE) {
       const cell = gridData[r][c]
-      if (cell.owner) setTooltip({ x: e.clientX, y: e.clientY, owner: cell.owner })
-      else setTooltip(null)
+      if (cell.owner) setTooltip({ x: e.clientX, y: e.clientY, owner: cell.owner, zone: cell.zone })
+      else setTooltip({ x: e.clientX, y: e.clientY, owner: null, zone: cell.zone })
     }
   }
 
@@ -186,10 +198,10 @@ export default function HomePage({ onSignIn }) {
         </div>
 
         {/* Headline + typewriter */}
-        <h1 style={{ fontSize:'clamp(1.4rem,3vw,2.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
+        <h1 style={{ fontSize:'clamp(2.5rem,7vw,6rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
           Own your spot.
         </h1>
-        <div style={{ fontSize:'clamp(1.4rem,3vw,2.5rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'1.5rem', minHeight:'1.1em', color:'#555' }}>
+        <div style={{ fontSize:'clamp(2.5rem,7vw,6rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'1.5rem', minHeight:'1.1em', color:'#555' }}>
           {tagline}<span style={{ display:'inline-block', width:3, height:'0.85em', background:'#fff', marginLeft:4, verticalAlign:'middle', animation:'blink 1s infinite' }} />
         </div>
 
@@ -204,9 +216,19 @@ export default function HomePage({ onSignIn }) {
             onMouseMove={handleMouseMove} onMouseLeave={() => setTooltip(null)} />
           {tooltip && (
             <div style={{ position:'fixed', left:tooltip.x+12, top:tooltip.y-30, background:'#fff', color:'#000', fontFamily:'Space Mono,monospace', fontSize:'0.65rem', padding:'3px 8px', fontWeight:700, pointerEvents:'none', zIndex:200, whiteSpace:'nowrap' }}>
-              {tooltip.owner.name} — {tooltip.owner.tag}
+              {tooltip.owner ? `${tooltip.owner.name} — ${tooltip.owner.tag}` : `Zone ${tooltip.zone} — available`}
             </div>
           )}
+        </div>
+
+        {/* Zone legend */}
+        <div style={{ display:'flex', justifyContent:'center', gap:'1.5rem', marginBottom:'1rem', flexWrap:'wrap' }}>
+          {[['#f5f5f5', 'Zone A — center'], ['#8c8c8c', 'Zone B — mid'], ['#373737', 'Zone C — outer']].map(([color, label]) => (
+            <div key={label} style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+              <div style={{ width:10, height:10, background:color, border:'1px solid rgba(255,255,255,0.2)' }} />
+              <span style={{ fontSize:'0.7rem', color:'#9e9e9e' }}>{label}</span>
+            </div>
+          ))}
         </div>
 
         {/* Grid stats */}
@@ -220,10 +242,11 @@ export default function HomePage({ onSignIn }) {
         </div>
       </section>
 
+
       {/* HOW IT WORKS */}
       <section style={{ padding:'5rem 2rem', maxWidth:1000, margin:'0 auto', borderTop:'1px solid rgba(255,255,255,0.08)' }}>
         <p style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', color:'#555', letterSpacing:'0.2em', textTransform:'uppercase', marginBottom:'1rem' }}>How it works</p>
-        <h2 style={{ fontSize:'clamp(1.6rem,3vw,2.2rem)', fontWeight:700, letterSpacing:'-0.02em', marginBottom:'2.5rem' }}>Four ways to play.</h2>
+        <h2 style={{ fontSize:'clamp(1.6rem,3vw,2.2rem)', fontWeight:700, letterSpacing:'-0.02em', marginBottom:'2.5rem' }}>Three ways to play.</h2>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'1.5rem' }}>
           {[
             ['01 — OWN', 'Buy your square', 'Pick your spot on the 1000×1000 grid. Add your photo, link, and color. Yours forever — or until you sell it.'],
