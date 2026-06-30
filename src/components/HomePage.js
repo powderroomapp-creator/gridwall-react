@@ -13,10 +13,10 @@ const TAGLINES = [
   "Passive income at $1.",
 ]
 
-const SAMPLE = 80
+const SAMPLE = 100
 const CENTER = SAMPLE / 2
-const ZONE_A_RADIUS = 14.56
-const ZONE_AB_RADIUS = 33.28
+const ZONE_A_RADIUS = 18.2
+const ZONE_AB_RADIUS = 41.6
 
 function getZone(c, r) {
   const dist = Math.sqrt(Math.pow(c - CENTER, 2) + Math.pow(r - CENTER, 2))
@@ -192,27 +192,23 @@ export default function HomePage({ onSignIn }) {
       <section style={{ paddingTop: '80px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
 
         {/* Eyebrow */}
-        <div style={{ fontFamily:'Space Mono,monospace', fontSize:'0.7rem', letterSpacing:'0.18em', color:'#555', textTransform:'uppercase', marginBottom:'1.25rem', display:'flex', alignItems:'center', gap:'0.75rem' }}>
+        <div style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', letterSpacing:'0.18em', color:'#555', textTransform:'uppercase', marginBottom:'0.75rem', display:'flex', alignItems:'center', gap:'0.75rem' }}>
           <div style={{ width:6, height:6, borderRadius:'50%', background:'#fff', animation:'pulse 2s infinite' }} />
           1,000,000 squares — 1000 × 1000 grid
         </div>
 
-        {/* Headline + typewriter */}
-        <h1 style={{ fontSize:'clamp(2.5rem,7vw,6rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'0.25rem' }}>
+        {/* Headline + typewriter - smaller now */}
+        <h1 style={{ fontSize:'clamp(1.2rem,2.5vw,1.8rem)', fontWeight:700, lineHeight:1.1, letterSpacing:'-0.02em', marginBottom:'0.15rem' }}>
           Own your spot.
         </h1>
-        <div style={{ fontSize:'clamp(2.5rem,7vw,6rem)', fontWeight:700, lineHeight:1.0, letterSpacing:'-0.03em', marginBottom:'1.5rem', minHeight:'1.1em', color:'#555' }}>
-          {tagline}<span style={{ display:'inline-block', width:3, height:'0.85em', background:'#fff', marginLeft:4, verticalAlign:'middle', animation:'blink 1s infinite' }} />
+        <div style={{ fontSize:'clamp(1.2rem,2.5vw,1.8rem)', fontWeight:700, lineHeight:1.1, letterSpacing:'-0.02em', marginBottom:'1.25rem', minHeight:'1.3em', color:'#555' }}>
+          {tagline}<span style={{ display:'inline-block', width:2, height:'0.85em', background:'#fff', marginLeft:4, verticalAlign:'middle', animation:'blink 1s infinite' }} />
         </div>
 
-        <p style={{ color:'#9e9e9e', fontSize:'clamp(0.9rem,2vw,1.1rem)', maxWidth:480, marginBottom:'2rem', lineHeight:1.7 }}>
-          Buy a square. Customize your profile. Rent it out for passive income. Sell it for profit. The grid is filling up.
-        </p>
-
-        {/* Grid */}
-        <div style={{ position:'relative', display:'inline-block', marginBottom:'1rem' }}>
-          <canvas ref={canvasRef} width={560} height={560}
-            style={{ display:'block', border:'1px solid rgba(255,255,255,0.1)', cursor:'crosshair', maxWidth:'calc(100vw - 2rem)' }}
+        {/* Grid - bigger now */}
+        <div style={{ position:'relative', display:'inline-block', marginBottom:'1.25rem' }}>
+          <canvas ref={canvasRef} width={720} height={720}
+            style={{ display:'block', border:'1px solid rgba(255,255,255,0.1)', cursor:'crosshair', maxWidth:'calc(100vw - 1.5rem)', width:'min(720px, calc(100vw - 1.5rem))', height:'min(720px, calc(100vw - 1.5rem))' }}
             onMouseMove={handleMouseMove} onMouseLeave={() => setTooltip(null)} />
           {tooltip && (
             <div style={{ position:'fixed', left:tooltip.x+12, top:tooltip.y-30, background:'#fff', color:'#000', fontFamily:'Space Mono,monospace', fontSize:'0.65rem', padding:'3px 8px', fontWeight:700, pointerEvents:'none', zIndex:200, whiteSpace:'nowrap' }}>
@@ -220,6 +216,11 @@ export default function HomePage({ onSignIn }) {
             </div>
           )}
         </div>
+
+        {/* Description moved below grid */}
+        <p style={{ color:'#9e9e9e', fontSize:'clamp(0.8rem,1.6vw,0.95rem)', maxWidth:480, marginBottom:'1.5rem', lineHeight:1.6 }}>
+          Buy a square. Customize your profile. Rent it out for passive income. Sell it for profit. The grid is filling up.
+        </p>
 
         {/* Zone legend */}
         <div style={{ display:'flex', justifyContent:'center', gap:'1.5rem', marginBottom:'1rem', flexWrap:'wrap' }}>
