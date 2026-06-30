@@ -193,7 +193,7 @@ export default function HomePage({ onSignIn }) {
       <section style={{ paddingTop: '80px', minHeight: '100vh', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
 
         {/* Live activity sidebar - absolutely positioned in the empty left margin, doesn't affect centering */}
-        <div className="gw-activity-sidebar" style={{ position: 'absolute', left: '2rem', top: '110px', width: '240px' }}>
+        <div className="gw-activity-sidebar">
           <div style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'1rem' }}>
             <div style={{ width:6, height:6, borderRadius:'50%', background:'#fff', animation:'pulse 2s infinite' }} />
             <span style={{ fontFamily:'Space Mono,monospace', fontSize:'0.65rem', color:'#555', letterSpacing:'0.15em', textTransform:'uppercase' }}>Live activity</span>
@@ -347,8 +347,11 @@ export default function HomePage({ onSignIn }) {
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
         @keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
-        .gw-activity-sidebar { display: block; }
+        .gw-activity-sidebar { display: block; position: absolute; left: 2rem; top: 110px; width: 240px; }
         @media (max-width: 1300px) {
+          .gw-activity-sidebar { left: 0.75rem; width: 160px; top: 100px; }
+        }
+        @media (max-width: 900px) {
           .gw-activity-sidebar { display: none; }
         }
       `}</style>
