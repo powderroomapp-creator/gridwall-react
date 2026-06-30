@@ -15,8 +15,8 @@ const TAGLINES = [
 
 const SAMPLE = 80
 const CENTER = SAMPLE / 2
-const ZONE_A_RADIUS = 11.76
-const ZONE_AB_RADIUS = 30.96
+const ZONE_A_RADIUS = 14.56
+const ZONE_AB_RADIUS = 33.28
 
 function getZone(c, r) {
   const dist = Math.sqrt(Math.pow(c - CENTER, 2) + Math.pow(r - CENTER, 2))
